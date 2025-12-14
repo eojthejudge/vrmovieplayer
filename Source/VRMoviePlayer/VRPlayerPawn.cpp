@@ -3,9 +3,11 @@
 #include "VRPlayerPawn.h"
 #include "Camera/CameraComponent.h"
 #include "Components/SceneComponent.h"
-#include "HeadMountedDisplayFunctionLibrary.h"
+#include "IXRTrackingSystem.h"
+#include "IXRCamera.h"
 #include "MotionControllerComponent.h"
 #include "Kismet/GameplayStatics.h"
+#include "Engine/Engine.h"
 
 AVRPlayerPawn::AVRPlayerPawn()
 {
@@ -58,23 +60,30 @@ void AVRPlayerPawn::SetupPlayerInputComponent(UInputComponent* PlayerInputCompon
 
 void AVRPlayerPawn::InitializeVR()
 {
-	// Enable HMD
-	UHeadMountedDisplayFunctionLibrary::EnableHMD(true);
-
-	// Check if HMD is connected
-	if (UHeadMountedDisplayFunctionLibrary::IsHeadMountedDisplayEnabled())
+	// Get the XR tracking system
+	if (GEngine && GEngine->XRSystem.IsValid())
 	{
-		UE_LOG(LogTemp, Log, TEXT("VR Mode enabled - HMD detected"));
+		TSharedPtr<IXRTrackingSystem, ESPMode::ThreadSafe> XRSystem = GEngine->XRSystem;
 
-		// Set tracking origin to floor level
-		UHeadMountedDisplayFunctionLibrary::SetTrackingOrigin(EHMDTrackingOrigin::Floor);
+		if (XRSystem->IsHeadTrackingAllowed())
+		{
+			UE_LOG(LogTemp, Log, TEXT("VR Mode enabled - HMD detected"));
 
-		// Reset orientation and position
-		UHeadMountedDisplayFunctionLibrary::ResetOrientationAndPosition(0.0f, EOrientPositionSelector::OrientationAndPosition);
+			// Set tracking origin to stage level (floor-level tracking)
+			XRSystem->SetTrackingOrigin(EHMDTrackingOrigin::Stage);
+
+			// Reset orientation and position
+			XRSystem->ResetOrientationAndPosition(0.0f);
+		}
+		else
+		{
+			UE_LOG(LogTemp, Warning, TEXT("VR Mode enabled but head tracking not allowed. Running in non-VR mode."));
+			bVREnabled = false;
+		}
 	}
 	else
 	{
-		UE_LOG(LogTemp, Warning, TEXT("VR Mode enabled but no HMD detected. Running in non-VR mode."));
+		UE_LOG(LogTemp, Warning, TEXT("VR Mode enabled but no XR system detected. Running in non-VR mode."));
 		bVREnabled = false;
 	}
 }

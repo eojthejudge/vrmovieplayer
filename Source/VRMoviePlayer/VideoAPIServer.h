@@ -52,6 +52,12 @@ private:
 	// Server handle
 	FHttpServerModule* HttpServerModule;
 
+	// Route handles for cleanup
+	FHttpRouteHandle FilenameRouteHandle;
+	FHttpRouteHandle StateRouteHandle;
+	FHttpRouteHandle TimestampRouteHandle;
+	FHttpRouteHandle DurationRouteHandle;
+
 	// Route handlers
 	bool HandleGetFilename(const FHttpServerRequest& Request, const FHttpResultCallback& OnComplete);
 	bool HandleGetState(const FHttpServerRequest& Request, const FHttpResultCallback& OnComplete);

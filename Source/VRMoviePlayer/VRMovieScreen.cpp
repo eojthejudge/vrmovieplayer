@@ -34,7 +34,6 @@ AVRMovieScreen::AVRMovieScreen()
 	// Create media texture
 	MediaTexture = CreateDefaultSubobject<UMediaTexture>(TEXT("MediaTexture"));
 	MediaTexture->AutoClear = true;
-	MediaTexture->SetDefaultMediaPlayer(nullptr);
 
 	VideoPlayerController = nullptr;
 	ScreenMaterial = nullptr;

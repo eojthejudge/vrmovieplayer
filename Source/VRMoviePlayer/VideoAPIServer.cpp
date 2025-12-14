@@ -58,40 +58,28 @@ bool AVideoAPIServer::StartServer()
 	}
 
 	// Bind routes
-	HttpRouter->BindRoute(
+	FilenameRouteHandle = HttpRouter->BindRoute(
 		FHttpPath(TEXT("/api/filename")),
 		EHttpServerRequestVerbs::VERB_GET,
-		[this](const FHttpServerRequest& Request, const FHttpResultCallback& OnComplete)
-		{
-			return HandleGetFilename(Request, OnComplete);
-		}
+		FHttpRequestHandler::CreateUObject(this, &AVideoAPIServer::HandleGetFilename)
 	);
 
-	HttpRouter->BindRoute(
+	StateRouteHandle = HttpRouter->BindRoute(
 		FHttpPath(TEXT("/api/state")),
 		EHttpServerRequestVerbs::VERB_GET,
-		[this](const FHttpServerRequest& Request, const FHttpResultCallback& OnComplete)
-		{
-			return HandleGetState(Request, OnComplete);
-		}
+		FHttpRequestHandler::CreateUObject(this, &AVideoAPIServer::HandleGetState)
 	);
 
-	HttpRouter->BindRoute(
+	TimestampRouteHandle = HttpRouter->BindRoute(
 		FHttpPath(TEXT("/api/timestamp")),
 		EHttpServerRequestVerbs::VERB_GET,
-		[this](const FHttpServerRequest& Request, const FHttpResultCallback& OnComplete)
-		{
-			return HandleGetTimestamp(Request, OnComplete);
-		}
+		FHttpRequestHandler::CreateUObject(this, &AVideoAPIServer::HandleGetTimestamp)
 	);
 
-	HttpRouter->BindRoute(
+	DurationRouteHandle = HttpRouter->BindRoute(
 		FHttpPath(TEXT("/api/duration")),
 		EHttpServerRequestVerbs::VERB_GET,
-		[this](const FHttpServerRequest& Request, const FHttpResultCallback& OnComplete)
-		{
-			return HandleGetDuration(Request, OnComplete);
-		}
+		FHttpRequestHandler::CreateUObject(this, &AVideoAPIServer::HandleGetDuration)
 	);
 
 	// Start listening
@@ -117,10 +105,10 @@ void AVideoAPIServer::StopServer()
 
 	if (HttpRouter.IsValid())
 	{
-		HttpRouter->UnbindRoute(FHttpPath(TEXT("/api/filename")), EHttpServerRequestVerbs::VERB_GET);
-		HttpRouter->UnbindRoute(FHttpPath(TEXT("/api/state")), EHttpServerRequestVerbs::VERB_GET);
-		HttpRouter->UnbindRoute(FHttpPath(TEXT("/api/timestamp")), EHttpServerRequestVerbs::VERB_GET);
-		HttpRouter->UnbindRoute(FHttpPath(TEXT("/api/duration")), EHttpServerRequestVerbs::VERB_GET);
+		HttpRouter->UnbindRoute(FilenameRouteHandle);
+		HttpRouter->UnbindRoute(StateRouteHandle);
+		HttpRouter->UnbindRoute(TimestampRouteHandle);
+		HttpRouter->UnbindRoute(DurationRouteHandle);
 		HttpRouter.Reset();
 	}
 }

@@ -6,7 +6,7 @@
 #include "GameFramework/Pawn.h"
 #include "Camera/CameraComponent.h"
 #include "Components/SceneComponent.h"
-#include "HeadMountedDisplayFunctionLibrary.h"
+#include "IXRTrackingSystem.h"
 #include "MotionControllerComponent.h"
 #include "VRPlayerPawn.generated.h"
 

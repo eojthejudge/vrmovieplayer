@@ -1,37 +1,25 @@
 {
 	"FileVersion": 3,
-	"EngineAssociation": "5.0",
+	"EngineAssociation": "5.7",
 	"Category": "",
 	"Description": "VR Movie Player for Oculus Quest",
 	"Modules": [
 		{
 			"Name": "VRMoviePlayer",
 			"Type": "Runtime",
-			"LoadingPhase": "Default",
-			"AdditionalDependencies": [
-				"Engine",
-				"MediaAssets",
-				"HTTP",
-				"Json",
-				"JsonUtilities"
-			]
+			"LoadingPhase": "Default"
 		}
 	],
 	"Plugins": [
 		{
-			"Name": "OculusVR",
-			"Enabled": true
-		},
-		{
-			"Name": "MediaPlayerEditor",
-			"Enabled": true
-		},
-		{
-			"Name": "HTTPServer",
-			"Enabled": true
+			"Name": "MetaXR",
+			"Enabled": false
 		}
 	],
 	"TargetPlatforms": [
 		"Android"
-	]
+	],
+	"AdditionalRootDirectories": [],
+	"AdditionalPluginDirectories": [],
+	"EpicSampleNameHash": ""
 }

@@ -13,7 +13,7 @@ public class VRMoviePlayer : ModuleRules
 			"CoreUObject",
 			"Engine",
 			"InputCore",
-			"HeadMountedDisplay",
+			"XRBase",
 			"MediaAssets",
 			"MediaUtils",
 			"HTTP",
@@ -26,10 +26,13 @@ public class VRMoviePlayer : ModuleRules
 
 		PrivateDependencyModuleNames.AddRange(new string[] { });
 
-		// For Oculus Quest support
+		// For Meta Quest support
 		if (Target.Platform == UnrealTargetPlatform.Android)
 		{
-			PrivateDependencyModuleNames.Add("OculusHMD");
+			PrivateDependencyModuleNames.AddRange(new string[] {
+				"OculusXRHMD",
+				"OculusXRInput"
+			});
 		}
 	}
 }
