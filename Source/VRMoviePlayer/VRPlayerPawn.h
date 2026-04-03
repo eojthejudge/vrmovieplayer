@@ -7,7 +7,6 @@
 #include "Camera/CameraComponent.h"
 #include "Components/SceneComponent.h"
 #include "IXRTrackingSystem.h"
-#include "MotionControllerComponent.h"
 #include "VRPlayerPawn.generated.h"
 
 UCLASS()
@@ -37,14 +36,6 @@ public:
 	// Camera component for VR
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "VR")
 	UCameraComponent* Camera;
-
-	// Left motion controller
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "VR")
-	UMotionControllerComponent* LeftController;
-
-	// Right motion controller
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "VR")
-	UMotionControllerComponent* RightController;
 
 	// Enable or disable VR mode
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "VR")

@@ -46,28 +46,63 @@ See [requirements.md](requirements.md) for detailed functional and non-functiona
 
 ## Building the Project
 
-### 1. Generate Project Files
+### Prerequisites
+- Unreal Engine 5.7
+- Visual Studio 2022 with C++ build tools
+- Project file paths configured for your installation
 
-Right-click on `VRMoviePlayer.uproject` and select "Generate Visual Studio project files" (or equivalent for your platform).
+### Quick Start (Recommended)
 
-### 2. Open in IDE
+The easiest way to build is to open the project file directly, which auto-generates and builds:
 
-Open the generated solution file in Visual Studio (or your IDE).
+```powershell
+# Adjust paths to match your UE and Visual Studio installation
+& "G:\EpicLauncher\UE_5.7\Engine\Binaries\Win64\UnrealEditor.exe" "F:\devel\git\vrmovieplayer\VRMoviePlayer.uproject"
+```
 
-### 3. Build the Project
+### Full Build Process (for troubleshooting)
 
-Build the project in Development or Shipping configuration.
+If you encounter build errors, follow these steps:
 
-### 4. Open in Unreal Editor
+```powershell
+# 1. Close any running Unreal processes
+Get-Process | Where-Object {$_.Name -like "*Unreal*" -or $_.Name -like "*msbuild*"} | Stop-Process -Force -ErrorAction SilentlyContinue
 
-Double-click `VRMoviePlayer.uproject` to open in Unreal Editor.
+# 2. Navigate to project directory
+cd F:\devel\git\vrmovieplayer
 
-### 5. Package for Oculus Quest
+# 3. Clean build artifacts
+Remove-Item -Path "Binaries", "Intermediate", "Saved" -Recurse -Force -ErrorAction SilentlyContinue
 
-- In Unreal Editor: File → Package Project → Android → Android (ASTC)
-- Configure Android SDK/NDK paths in Project Settings
-- Enable Oculus VR plugin
-- Package for Quest platform
+# 4. Regenerate Visual Studio project files
+& "G:\EpicLauncher\UE_5.7\Engine\Binaries\Win64\UnrealVersionSelector.exe" /projectfiles "F:\devel\git\vrmovieplayer\VRMoviePlayer.uproject"
+
+Start-Sleep -Seconds 3
+
+# 5. Open Visual Studio
+$vs = "G:\Program Files\Microsoft Visual Studio\2022\Community\Common7\IDE\devenv.exe"
+& $vs "VRMoviePlayer.sln"
+```
+
+In Visual Studio:
+- Select **Development Editor** configuration (top toolbar dropdown)
+- Build: `Ctrl+Shift+B` or **Build → Build Solution**
+- Wait for "Build succeeded" message
+- Close Visual Studio
+
+```powershell
+# 6. Open the project in Unreal Editor
+& "G:\EpicLauncher\UE_5.7\Engine\Binaries\Win64\UnrealEditor.exe" "F:\devel\git\vrmovieplayer\VRMoviePlayer.uproject"
+```
+
+### Package for Oculus Quest
+
+Once the editor opens successfully:
+
+1. In Unreal Editor: **File → Package Project → Android → Android (ASTC)**
+2. Choose output folder
+3. Wait for packaging to complete
+4. Install on Quest: `adb install -r output.apk`
 
 ## REST API Endpoints
 

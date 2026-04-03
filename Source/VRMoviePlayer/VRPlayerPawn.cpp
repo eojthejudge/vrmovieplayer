@@ -5,7 +5,6 @@
 #include "Components/SceneComponent.h"
 #include "IXRTrackingSystem.h"
 #include "IXRCamera.h"
-#include "MotionControllerComponent.h"
 #include "Kismet/GameplayStatics.h"
 #include "Engine/Engine.h"
 
@@ -21,16 +20,6 @@ AVRPlayerPawn::AVRPlayerPawn()
 	Camera = CreateDefaultSubobject<UCameraComponent>(TEXT("Camera"));
 	Camera->SetupAttachment(VRRoot);
 	Camera->bUsePawnControlRotation = false;
-
-	// Create Left Motion Controller
-	LeftController = CreateDefaultSubobject<UMotionControllerComponent>(TEXT("LeftController"));
-	LeftController->SetupAttachment(VRRoot);
-	LeftController->MotionSource = FName("Left");
-
-	// Create Right Motion Controller
-	RightController = CreateDefaultSubobject<UMotionControllerComponent>(TEXT("RightController"));
-	RightController->SetupAttachment(VRRoot);
-	RightController->MotionSource = FName("Right");
 
 	bVREnabled = true;
 }

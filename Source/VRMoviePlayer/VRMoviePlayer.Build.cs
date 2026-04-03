@@ -14,6 +14,7 @@ public class VRMoviePlayer : ModuleRules
 			"Engine",
 			"InputCore",
 			"XRBase",
+			"EnhancedInput",
 			"MediaAssets",
 			"MediaUtils",
 			"HTTP",
