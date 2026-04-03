@@ -1,0 +1,129 @@
+# Unreal Engine 5 .gitignore
+# This file specifies intentionally untracked files to ignore for a VR Movie Player project
+
+# ============================================================================
+# Unreal Engine Build Artifacts
+# ============================================================================
+Binaries/
+Intermediate/
+Saved/
+DerivedDataCache/
+
+# ============================================================================
+# Unreal Engine Generated Files
+# ============================================================================
+*.sln
+*.vcxproj
+*.vcxproj.filters
+
+# ============================================================================
+# IDE & Editor Files
+# ============================================================================
+.vs/
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+*.sublime-project
+*.sublime-workspace
+
+# ============================================================================
+# Android Build Artifacts & Gradle
+# ============================================================================
+.gradle/
+*.apk
+*.aab
+local.properties
+gradle-wrapper.jar
+
+# ============================================================================
+# Visual Studio & MSBuild
+# ============================================================================
+*.obj
+*.ilk
+*.pdb
+*.exe
+*.so
+*.a
+*.lib
+*.dylib
+*.exp
+
+# ============================================================================
+# Plugins - Engine Plugins (generated)
+# ============================================================================
+Plugins/*/Binaries/
+Plugins/*/Intermediate/
+
+# ============================================================================
+# Source Control & Local Configuration
+# ============================================================================
+.git/
+.gitmodules
+.hg/
+*.orig
+
+# ============================================================================
+# Temporary Files
+# ============================================================================
+*.tmp
+*.temp
+*.log
+Saved/Crashes/
+Saved/Logs/
+
+# ============================================================================
+# Platform-Specific Files
+# ============================================================================
+# macOS
+.AppleDouble
+.LSOverride
+*.playground
+
+# Windows
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+
+# Linux
+.directory
+
+# ============================================================================
+# Python & Build Scripts (if used)
+# ============================================================================
+__pycache__/
+*.pyc
+*.pyo
+*.egg-info/
+dist/
+build/
+
+# ============================================================================
+# Editor Preferences (local to machine)
+# ============================================================================
+.editorconfig
+.vscode/settings.json
+.vscode/launch.json
+
+# ============================================================================
+# Generated Content (can be regenerated)
+# ============================================================================
+# Unreal's Content Browser generated files are OK to track,
+# but avoid tracking large binary assets if they can be sourced elsewhere
+# Uncomment below if you have large video/audio files that should not be tracked:
+# *.mp4
+# *.mov
+# *.avi
+# *.mkv
+# *.wav
+# *.ogg
+
+# ============================================================================
+# User-Specific Files (local development)
+# ============================================================================
+local_settings.ini
+my_config.txt
+*.user
+*.VC.db
