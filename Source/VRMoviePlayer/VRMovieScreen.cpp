@@ -43,13 +43,20 @@ void AVRMovieScreen::BeginPlay()
 {
 	Super::BeginPlay();
 
+	UE_LOG(LogTemp, Warning, TEXT("VRMovieScreen BeginPlay - Position: %s"), *GetActorLocation().ToString());
+
 	// Create dynamic material for the screen
 	CreateScreenMaterial();
 
 	// If video player controller is set, initialize the screen
 	if (VideoPlayerController && VideoPlayerController->MediaPlayer)
 	{
+		UE_LOG(LogTemp, Warning, TEXT("Initializing screen with MediaPlayer"));
 		InitializeScreen(VideoPlayerController->MediaPlayer);
+	}
+	else
+	{
+		UE_LOG(LogTemp, Error, TEXT("VideoPlayerController or MediaPlayer is null!"));
 	}
 }
 
@@ -72,8 +79,22 @@ void AVRMovieScreen::InitializeScreen(UMediaPlayer* MediaPlayer)
 	// Update material to use the media texture
 	if (ScreenMaterial)
 	{
+		// Try to set the media texture - this requires the material to have this parameter
 		ScreenMaterial->SetTextureParameterValue(FName("MediaTexture"), MediaTexture);
+		
+		// Also try setting it as the base color texture
+		ScreenMaterial->SetTextureParameterValue(FName("BaseTexture"), MediaTexture);
+		ScreenMaterial->SetTextureParameterValue(FName("BaseColor"), MediaTexture);
+		
+		// Set emissive to show the texture even without lighting
+		ScreenMaterial->SetTextureParameterValue(FName("EmissiveTexture"), MediaTexture);
+		ScreenMaterial->SetScalarParameterValue(FName("EmissiveStrength"), 1.0f);
+		
 		UE_LOG(LogTemp, Log, TEXT("VR Movie Screen initialized successfully"));
+	}
+	else
+	{
+		UE_LOG(LogTemp, Warning, TEXT("ScreenMaterial is null"));
 	}
 }
 
@@ -125,13 +146,20 @@ void AVRMovieScreen::SetScreenPosition(const FVector& PlayerLocation, const FRot
 
 void AVRMovieScreen::CreateScreenMaterial()
 {
-	// Try to load a basic unlit material
-	static ConstructorHelpers::FObjectFinder<UMaterial> UnlitMaterial(TEXT("/Engine/BasicShapes/BasicShapeMaterial"));
-
-	UMaterial* BaseMaterial = nullptr;
-	if (UnlitMaterial.Succeeded())
+	if (!ScreenMesh)
 	{
-		BaseMaterial = UnlitMaterial.Object;
+		UE_LOG(LogTemp, Error, TEXT("ScreenMesh is null"));
+		return;
+	}
+
+	// Try to load a custom video screen material first
+	UMaterial* BaseMaterial = Cast<UMaterial>(StaticLoadObject(UMaterial::StaticClass(), nullptr, TEXT("/Game/Materials/M_VideoScreen")));
+	
+	// Fallback to engine material if custom doesn't exist
+	if (!BaseMaterial)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("Custom M_VideoScreen material not found. Using default material."));
+		BaseMaterial = Cast<UMaterial>(StaticLoadObject(UMaterial::StaticClass(), nullptr, TEXT("/Engine/BasicShapes/BasicShapeMaterial")));
 	}
 
 	// Create dynamic material instance
@@ -141,11 +169,11 @@ void AVRMovieScreen::CreateScreenMaterial()
 		if (ScreenMaterial)
 		{
 			ScreenMesh->SetMaterial(0, ScreenMaterial);
-			UE_LOG(LogTemp, Log, TEXT("Screen material created"));
+			UE_LOG(LogTemp, Log, TEXT("Screen material created and assigned"));
 		}
 	}
 	else
 	{
-		UE_LOG(LogTemp, Warning, TEXT("Could not load base material for screen. Create a custom material with MediaTexture parameter in Unreal Editor."));
+		UE_LOG(LogTemp, Error, TEXT("Could not load any material for screen"));
 	}
 }

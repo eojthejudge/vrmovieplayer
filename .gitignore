@@ -113,7 +113,7 @@ build/
 # Unreal's Content Browser generated files are OK to track,
 # but avoid tracking large binary assets if they can be sourced elsewhere
 # Uncomment below if you have large video/audio files that should not be tracked:
-# *.mp4
+Content/Videos/*.mp4
 # *.mov
 # *.avi
 # *.mkv

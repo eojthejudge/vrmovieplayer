@@ -35,15 +35,15 @@ public:
 	AVRMovieScreen* MovieScreen;
 
 	// Default video file path for testing
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "VR Movie Player")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "VR Movie Player", meta = (DisplayName = "Default Video Path"))
 	FString DefaultVideoPath;
 
 	// API server port
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "VR Movie Player")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "VR Movie Player", meta = (DisplayName = "API Port", UIMin = 1024, UIMax = 65535))
 	int32 APIPort;
 
 	// Auto-play video on start
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "VR Movie Player")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "VR Movie Player", meta = (DisplayName = "Auto Play on Start"))
 	bool bAutoPlayOnStart;
 
 private:

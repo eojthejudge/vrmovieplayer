@@ -25,5 +25,8 @@
 	],
 	"AdditionalRootDirectories": [],
 	"AdditionalPluginDirectories": [],
-	"EpicSampleNameHash": ""
+	"EpicSampleNameHash": "",
+	"DefaultClasses": {
+		"/Script/Engine.GameMode": "/Script/VRMoviePlayer.VRMoviePlayerGameMode"
+	}
 }
