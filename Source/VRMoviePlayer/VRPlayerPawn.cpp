@@ -12,6 +12,9 @@ AVRPlayerPawn::AVRPlayerPawn()
 {
 	PrimaryActorTick.bCanEverTick = true;
 
+	// Auto-possess player 0 so the camera activates on Play
+	AutoPossessPlayer = EAutoReceiveInput::Player0;
+
 	// Create VR Root component
 	VRRoot = CreateDefaultSubobject<USceneComponent>(TEXT("VRRoot"));
 	RootComponent = VRRoot;

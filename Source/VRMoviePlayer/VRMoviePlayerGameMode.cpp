@@ -79,7 +79,7 @@ void AVRMoviePlayerGameMode::InitializeVRMoviePlayer()
 	MovieScreen = World->SpawnActor<AVRMovieScreen>(
 		AVRMovieScreen::StaticClass(),
 		FVector(300.0f, 0.0f, 100.0f), // Position in front of player
-		FRotator(0.0f, 180.0f, 0.0f),  // Face backwards (towards player)
+		FRotator::ZeroRotator,          // Rotation handled by mesh's relative rotation
 		SpawnParams
 	);
 
@@ -91,10 +91,8 @@ void AVRMoviePlayerGameMode::InitializeVRMoviePlayer()
 
 	// Link movie screen to video player controller
 	MovieScreen->VideoPlayerController = VideoPlayerController;
-	if (VideoPlayerController->MediaPlayer)
-	{
-		MovieScreen->InitializeScreen(VideoPlayerController->MediaPlayer);
-	}
+	UE_LOG(LogTemp, Warning, TEXT("MediaPlayer is: %s"), VideoPlayerController->MediaPlayer ? TEXT("valid") : TEXT("NULL"));
+	MovieScreen->InitializeScreen(VideoPlayerController->MediaPlayer);
 
 	UE_LOG(LogTemp, Log, TEXT("Movie Screen spawned successfully"));
 

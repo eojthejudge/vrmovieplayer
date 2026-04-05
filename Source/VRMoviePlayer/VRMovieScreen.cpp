@@ -28,7 +28,8 @@ AVRMovieScreen::AVRMovieScreen()
 	{
 		ScreenMesh->SetStaticMesh(PlaneMesh.Object);
 		ScreenMesh->SetRelativeScale3D(FVector(ScreenWidth / 100.0f, ScreenHeight / 100.0f, 1.0f));
-		ScreenMesh->SetRelativeRotation(FRotator(0.0f, 180.0f, 0.0f)); // Face the player
+		// Rotate to stand the plane vertical, facing -X toward the player, with correct up orientation
+		ScreenMesh->SetRelativeRotation(FRotator(90.0f, 0.0f, 0.0f));
 	}
 
 	// Create media texture
@@ -73,23 +74,19 @@ void AVRMovieScreen::InitializeScreen(UMediaPlayer* MediaPlayer)
 		return;
 	}
 
-	// Connect media texture to media player
+	// Connect media texture to media player and initialize its resource
 	MediaTexture->SetMediaPlayer(MediaPlayer);
+	MediaTexture->UpdateResource();
 
-	// Update material to use the media texture
+	// Log texture and material state for debugging
+	UE_LOG(LogTemp, Warning, TEXT("MediaTexture: %s, ScreenMaterial: %s"),
+		MediaTexture ? TEXT("valid") : TEXT("null"),
+		ScreenMaterial ? TEXT("valid") : TEXT("null"));
+
 	if (ScreenMaterial)
 	{
-		// Try to set the media texture - this requires the material to have this parameter
 		ScreenMaterial->SetTextureParameterValue(FName("MediaTexture"), MediaTexture);
-		
-		// Also try setting it as the base color texture
-		ScreenMaterial->SetTextureParameterValue(FName("BaseTexture"), MediaTexture);
-		ScreenMaterial->SetTextureParameterValue(FName("BaseColor"), MediaTexture);
-		
-		// Set emissive to show the texture even without lighting
-		ScreenMaterial->SetTextureParameterValue(FName("EmissiveTexture"), MediaTexture);
-		ScreenMaterial->SetScalarParameterValue(FName("EmissiveStrength"), 1.0f);
-		
+		UE_LOG(LogTemp, Warning, TEXT("SetTextureParameterValue called for 'MediaTexture'"));
 		UE_LOG(LogTemp, Log, TEXT("VR Movie Screen initialized successfully"));
 	}
 	else
