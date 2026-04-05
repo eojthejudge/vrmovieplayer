@@ -28,8 +28,8 @@ AVRMovieScreen::AVRMovieScreen()
 	{
 		ScreenMesh->SetStaticMesh(PlaneMesh.Object);
 		ScreenMesh->SetRelativeScale3D(FVector(ScreenWidth / 100.0f, ScreenHeight / 100.0f, 1.0f));
-		// Rotate to stand the plane vertical, facing -X toward the player, with correct up orientation
-		ScreenMesh->SetRelativeRotation(FRotator(90.0f, 0.0f, 0.0f));
+		// Yaw 90 + Roll 90: normal=-X (facing player), correct video orientation
+		ScreenMesh->SetRelativeRotation(FRotator(0.0f, 90.0f, 90.0f));
 	}
 
 	// Create media texture
