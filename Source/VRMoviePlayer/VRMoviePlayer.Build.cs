@@ -14,6 +14,7 @@ public class VRMoviePlayer : ModuleRules
 			"Engine",
 			"InputCore",
 			"XRBase",
+			"HeadMountedDisplay",
 			"EnhancedInput",
 			"MediaAssets",
 			"MediaUtils",
@@ -22,7 +23,10 @@ public class VRMoviePlayer : ModuleRules
 			"JsonUtilities",
 			"HTTPServer",
 			"Sockets",
-			"Networking"
+			"Networking",
+			"UMG",
+			"Slate",
+			"SlateCore"
 		});
 
 		PrivateDependencyModuleNames.AddRange(new string[] { });

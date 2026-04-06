@@ -3,6 +3,7 @@
 #include "VideoPlayerController.h"
 #include "MediaPlayer.h"
 #include "FileMediaSource.h"
+#include "HAL/FileManager.h"
 #include "Misc/Paths.h"
 
 AVideoPlayerController::AVideoPlayerController()
@@ -151,6 +152,34 @@ void AVideoPlayerController::SeekToTime(float TimeInSeconds)
 		MediaPlayer->Seek(Time);
 		UE_LOG(LogTemp, Log, TEXT("Seeking to time: %f seconds"), TimeInSeconds);
 	}
+}
+
+TArray<FString> AVideoPlayerController::ListVideoFiles(const FString& Directory) const
+{
+	TArray<FString> Result;
+
+	if (Directory.IsEmpty() || !FPaths::DirectoryExists(Directory))
+	{
+		UE_LOG(LogTemp, Warning, TEXT("Video directory not found: %s"), *Directory);
+		return Result;
+	}
+
+	static const TArray<FString> SupportedExtensions = { TEXT("*.mp4"), TEXT("*.mkv"), TEXT("*.avi"), TEXT("*.mov"), TEXT("*.webm") };
+
+	IFileManager& FileManager = IFileManager::Get();
+	for (const FString& Ext : SupportedExtensions)
+	{
+		TArray<FString> Found;
+		FileManager.FindFiles(Found, *(Directory / Ext), true, false);
+		for (const FString& File : Found)
+		{
+			Result.Add(Directory / File);
+		}
+	}
+
+	Result.Sort();
+	UE_LOG(LogTemp, Log, TEXT("Found %d video file(s) in %s"), Result.Num(), *Directory);
+	return Result;
 }
 
 void AVideoPlayerController::UpdatePlayerState()

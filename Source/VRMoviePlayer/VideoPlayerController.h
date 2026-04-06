@@ -86,6 +86,10 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Video")
 	void SeekToTime(float TimeInSeconds);
 
+	// List video files in a directory (returns full paths)
+	UFUNCTION(BlueprintCallable, Category = "Video")
+	TArray<FString> ListVideoFiles(const FString& Directory) const;
+
 private:
 	void UpdatePlayerState();
 };

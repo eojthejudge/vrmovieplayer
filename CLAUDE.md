@@ -12,8 +12,15 @@ VR Movie Player is an Unreal Engine 5.7 application for Oculus Quest that enable
 
 1. Generate project files by right-clicking `VRMoviePlayer.uproject` → "Generate Visual Studio project files"
 2. Open `VRMoviePlayer.sln` in Visual Studio
-3. Build with Development or Shipping configuration
+3. Build with **Development Editor** configuration for Win64
 4. Open in Unreal Editor by double-clicking `VRMoviePlayer.uproject`
+
+**Visual Studio 2022 install path:** `G:\Program Files\Microsoft Visual Studio\2022\Community`
+
+Command-line build:
+```powershell
+& "G:\Program Files\Microsoft Visual Studio\2022\Community\MSBuild\Current\Bin\MSBuild.exe" VRMoviePlayer.sln /p:Configuration="Development Editor" /p:Platform=Win64
+```
 
 ### Building for Oculus Quest (Android)
 
