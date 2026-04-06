@@ -7,6 +7,7 @@
 #include "VideoPlayerController.h"
 #include "VideoAPIServer.h"
 #include "VRMovieScreen.h"
+#include "VideoFileBrowser.h"
 #include "VRMoviePlayerGameMode.generated.h"
 
 UCLASS()
@@ -34,9 +35,17 @@ public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "VR Movie Player")
 	AVRMovieScreen* MovieScreen;
 
+	// VR file browser instance
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "VR Movie Player")
+	AVideoFileBrowser* FileBrowser;
+
 	// Default video file path for testing
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "VR Movie Player", meta = (DisplayName = "Default Video Path"))
 	FString DefaultVideoPath;
+
+	// Directory to browse for video files (defaults to platform-appropriate path if empty)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "VR Movie Player", meta = (DisplayName = "Video Directory"))
+	FString VideoDirectory;
 
 	// API server port
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "VR Movie Player", meta = (DisplayName = "API Port", UIMin = 1024, UIMax = 65535))

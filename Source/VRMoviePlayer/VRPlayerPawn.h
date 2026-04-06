@@ -7,6 +7,9 @@
 #include "Camera/CameraComponent.h"
 #include "Components/SceneComponent.h"
 #include "IXRTrackingSystem.h"
+#include "MotionControllerComponent.h"
+#include "Components/WidgetInteractionComponent.h"
+#include "VideoFileBrowser.h"
 #include "VRPlayerPawn.generated.h"
 
 UCLASS()
@@ -37,10 +40,31 @@ public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "VR")
 	UCameraComponent* Camera;
 
+	// Left motion controller
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "VR")
+	UMotionControllerComponent* LeftController;
+
+	// Right motion controller
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "VR")
+	UMotionControllerComponent* RightController;
+
+	// Widget interaction component on the right hand — drives the VR file browser cursor
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "VR")
+	UWidgetInteractionComponent* WidgetInteraction;
+
 	// Enable or disable VR mode
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "VR")
 	bool bVREnabled;
 
+	// Reference set by GameMode after spawning the file browser
+	UPROPERTY(BlueprintReadWrite, Category = "VR")
+	AVideoFileBrowser* FileBrowser;
+
 private:
 	void InitializeVR();
+
+	// Input handlers
+	void ToggleFileBrowser();
+	void TriggerPressed();
+	void TriggerReleased();
 };

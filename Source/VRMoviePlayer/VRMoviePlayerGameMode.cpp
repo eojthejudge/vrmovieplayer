@@ -7,17 +7,17 @@
 
 AVRMoviePlayerGameMode::AVRMoviePlayerGameMode()
 {
-	// Set default pawn class
 	DefaultPawnClass = AVRPlayerPawn::StaticClass();
 
-	// Initialize default values
 	APIPort = 8080;
 	bAutoPlayOnStart = false;
 	DefaultVideoPath = TEXT("");
+	VideoDirectory = TEXT("");
 
 	VideoPlayerController = nullptr;
 	APIServer = nullptr;
 	MovieScreen = nullptr;
+	FileBrowser = nullptr;
 }
 
 void AVRMoviePlayerGameMode::BeginPlay()
@@ -116,6 +116,41 @@ void AVRMoviePlayerGameMode::InitializeVRMoviePlayer()
 	APIServer->VideoPlayerController = VideoPlayerController;
 
 	UE_LOG(LogTemp, Log, TEXT("API Server spawned successfully"));
+
+	// Spawn VR File Browser (positioned left of the video screen; hidden until player opens it)
+	SpawnParams.Name = FName(TEXT("FileBrowser"));
+	FileBrowser = World->SpawnActor<AVideoFileBrowser>(
+		AVideoFileBrowser::StaticClass(),
+		FVector::ZeroVector,
+		FRotator::ZeroRotator,
+		SpawnParams
+	);
+
+	if (!FileBrowser)
+	{
+		UE_LOG(LogTemp, Error, TEXT("Failed to spawn Video File Browser"));
+		return;
+	}
+
+	FileBrowser->VideoPlayerController = VideoPlayerController;
+	if (!VideoDirectory.IsEmpty())
+	{
+		FileBrowser->VideoDirectory = VideoDirectory;
+	}
+
+	UE_LOG(LogTemp, Log, TEXT("Video File Browser spawned (hidden until Y button / F key)"));
+
+	// Give the file browser reference to the pawn so it can toggle it
+	APlayerController* PC = World->GetFirstPlayerController();
+	if (PC)
+	{
+		AVRPlayerPawn* VRPawn = Cast<AVRPlayerPawn>(PC->GetPawn());
+		if (VRPawn)
+		{
+			VRPawn->FileBrowser = FileBrowser;
+			UE_LOG(LogTemp, Log, TEXT("FileBrowser wired to VRPlayerPawn"));
+		}
+	}
 
 	// Auto-play video if configured
 	if (bAutoPlayOnStart && !DefaultVideoPath.IsEmpty())

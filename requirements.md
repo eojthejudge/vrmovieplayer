@@ -6,8 +6,9 @@
 - FR1.1: The application SHALL play video files in VR environment
 - FR1.2: The application SHALL render video content on a virtual screen
 - FR1.3: The application SHALL support standard video formats (MP4, AVI, MKV, etc.)
-- FR1.4: The application SHALL support play, pause, and stop operations
-- FR1.5: The application SHALL track and maintain current playback timestamp
+- FR1.4: The application SHALL support play, pause, and stop operations accessible within the VR environment (not REST API only); controller input SHALL control playback without removing the headset
+- FR1.5: The application SHALL track and maintain current playback timestamp, visible and queryable from within the VR environment
+- FR1.6: The application SHALL support video file selection from local storage via an in-VR file browser panel; the user SHALL be able to browse and select video files using VR motion controllers without removing the headset
 
 ### FR2: REST API Endpoints
 - FR2.1: GET endpoint to retrieve current video filename

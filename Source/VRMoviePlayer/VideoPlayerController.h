@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
 #include "MediaPlayer.h"
+#include "MediaSoundComponent.h"
 #include "MediaSource.h"
 #include "FileMediaSource.h"
 #include "VideoPlayerController.generated.h"
@@ -37,6 +38,10 @@ public:
 	// Media Player component
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Video")
 	UMediaPlayer* MediaPlayer;
+
+	// Audio output component — routes audio from MediaPlayer to the speakers
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Video")
+	UMediaSoundComponent* MediaSoundComponent;
 
 	// Current media source
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Video")
@@ -85,6 +90,10 @@ public:
 	// Seek to specific time in seconds
 	UFUNCTION(BlueprintCallable, Category = "Video")
 	void SeekToTime(float TimeInSeconds);
+
+	// List video files in a directory (returns full paths)
+	UFUNCTION(BlueprintCallable, Category = "Video")
+	TArray<FString> ListVideoFiles(const FString& Directory) const;
 
 private:
 	void UpdatePlayerState();
