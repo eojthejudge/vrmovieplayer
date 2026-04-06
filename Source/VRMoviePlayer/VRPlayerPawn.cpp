@@ -47,9 +47,12 @@ void AVRPlayerPawn::BeginPlay()
 {
 	Super::BeginPlay();
 
-	if (bVREnabled)
+	InitializeVR();
+
+	// If VR didn't initialise (desktop/editor), switch interaction to mouse source
+	if (!bVREnabled)
 	{
-		InitializeVR();
+		WidgetInteraction->InteractionSource = EWidgetInteractionSource::Mouse;
 	}
 }
 

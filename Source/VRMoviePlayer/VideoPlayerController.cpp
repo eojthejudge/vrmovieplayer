@@ -2,6 +2,7 @@
 
 #include "VideoPlayerController.h"
 #include "MediaPlayer.h"
+#include "MediaSoundComponent.h"
 #include "FileMediaSource.h"
 #include "HAL/FileManager.h"
 #include "Misc/Paths.h"
@@ -13,6 +14,10 @@ AVideoPlayerController::AVideoPlayerController()
 	// Create MediaPlayer
 	MediaPlayer = CreateDefaultSubobject<UMediaPlayer>(TEXT("MediaPlayer"));
 	MediaSource = CreateDefaultSubobject<UFileMediaSource>(TEXT("MediaSource"));
+
+	// Create sound component and bind it to the media player for audio output
+	MediaSoundComponent = CreateDefaultSubobject<UMediaSoundComponent>(TEXT("MediaSoundComponent"));
+	MediaSoundComponent->SetupAttachment(RootComponent);
 
 	PlayerState = EPlayerState::Stopped;
 	CurrentVideoPath = TEXT("");
@@ -26,6 +31,11 @@ void AVideoPlayerController::BeginPlay()
 	{
 		MediaPlayer->PlayOnOpen = true;
 		MediaPlayer->SetLooping(false);
+	}
+
+	if (MediaSoundComponent)
+	{
+		MediaSoundComponent->SetMediaPlayer(MediaPlayer);
 	}
 }
 

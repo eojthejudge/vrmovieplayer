@@ -119,6 +119,7 @@ Content/Videos/*.mp4
 # *.mkv
 # *.wav
 # *.ogg
+Videos/
 
 # ============================================================================
 # User-Specific Files (local development)

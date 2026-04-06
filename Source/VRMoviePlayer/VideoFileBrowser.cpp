@@ -58,24 +58,32 @@ void AVideoFileBrowser::ShowBrowser()
 {
 	RefreshFileList();
 
-	// Place the panel in front of the player camera each time it's shown
 	if (UWorld* World = GetWorld())
 	{
 		APlayerController* PC = World->GetFirstPlayerController();
+
+		// Place the panel in front of the player camera each time it's shown
 		if (PC && PC->PlayerCameraManager)
 		{
 			FVector CamLoc = PC->PlayerCameraManager->GetCameraLocation();
 			FRotator CamRot = PC->PlayerCameraManager->GetCameraRotation();
 
-			// Position 150cm ahead, keeping only yaw so the panel stays upright
 			FRotator FaceRot = FRotator(0.0f, CamRot.Yaw, 0.0f);
-			FVector Forward = FaceRot.Vector();
-			FVector NewLocation = CamLoc + Forward * 150.0f;
-			NewLocation.Z = CamLoc.Z; // same height as camera
+			FVector NewLocation = CamLoc + FaceRot.Vector() * 150.0f;
+			NewLocation.Z = CamLoc.Z;
 
 			SetActorLocation(NewLocation);
-			// Face the panel back toward the player
 			SetActorRotation(FRotator(0.0f, CamRot.Yaw + 180.0f, 0.0f));
+		}
+
+		// Show mouse cursor so the player can click file entries on desktop
+		if (PC)
+		{
+			PC->bShowMouseCursor = true;
+			FInputModeGameAndUI InputMode;
+			InputMode.SetLockMouseToViewportBehavior(EMouseLockMode::DoNotLock);
+			InputMode.SetHideCursorDuringCapture(false);
+			PC->SetInputMode(InputMode);
 		}
 	}
 
@@ -90,6 +98,17 @@ void AVideoFileBrowser::HideBrowser()
 	SetActorHiddenInGame(true);
 	WidgetComponent->SetVisibility(false);
 	bIsVisible = false;
+
+	// Restore game-only input and hide cursor
+	if (UWorld* World = GetWorld())
+	{
+		if (APlayerController* PC = World->GetFirstPlayerController())
+		{
+			PC->bShowMouseCursor = false;
+			PC->SetInputMode(FInputModeGameOnly());
+		}
+	}
+
 	UE_LOG(LogTemp, Log, TEXT("VideoFileBrowser: hidden"));
 }
 
