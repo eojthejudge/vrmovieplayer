@@ -37,6 +37,7 @@ DerivedDataCache/
 *.aab
 local.properties
 gradle-wrapper.jar
+package/
 
 # ============================================================================
 # Visual Studio & MSBuild

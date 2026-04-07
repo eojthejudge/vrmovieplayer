@@ -31,13 +31,6 @@ public class VRMoviePlayer : ModuleRules
 
 		PrivateDependencyModuleNames.AddRange(new string[] { });
 
-		// For Meta Quest support
-		if (Target.Platform == UnrealTargetPlatform.Android)
-		{
-			PrivateDependencyModuleNames.AddRange(new string[] {
-				"OculusXRHMD",
-				"OculusXRInput"
-			});
-		}
+
 	}
 }

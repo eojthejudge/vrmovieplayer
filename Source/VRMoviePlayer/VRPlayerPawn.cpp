@@ -65,21 +65,9 @@ void AVRPlayerPawn::SetupPlayerInputComponent(UInputComponent* PlayerInputCompon
 {
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
 
-	// Y button (left controller) — toggle the VR file browser
-#if PLATFORM_ANDROID
-	PlayerInputComponent->BindKey(EKeys::OculusTouch_Left_FaceButton2, IE_Pressed, this, &AVRPlayerPawn::ToggleFileBrowser);
-#endif
-	// Keyboard fallback for desktop testing
-	PlayerInputComponent->BindKey(EKeys::F, IE_Pressed, this, &AVRPlayerPawn::ToggleFileBrowser);
-
-	// Right trigger — send pointer press/release to the widget interaction component
-#if PLATFORM_ANDROID
-	PlayerInputComponent->BindKey(EKeys::OculusTouch_Right_Trigger_Click, IE_Pressed, this, &AVRPlayerPawn::TriggerPressed);
-	PlayerInputComponent->BindKey(EKeys::OculusTouch_Right_Trigger_Click, IE_Released, this, &AVRPlayerPawn::TriggerReleased);
-#endif
-	// Mouse fallback for desktop testing
-	PlayerInputComponent->BindKey(EKeys::LeftMouseButton, IE_Pressed, this, &AVRPlayerPawn::TriggerPressed);
-	PlayerInputComponent->BindKey(EKeys::LeftMouseButton, IE_Released, this, &AVRPlayerPawn::TriggerReleased);
+	PlayerInputComponent->BindAction("ToggleFileBrowser", IE_Pressed, this, &AVRPlayerPawn::ToggleFileBrowser);
+	PlayerInputComponent->BindAction("TriggerPress", IE_Pressed, this, &AVRPlayerPawn::TriggerPressed);
+	PlayerInputComponent->BindAction("TriggerPress", IE_Released, this, &AVRPlayerPawn::TriggerReleased);
 }
 
 void AVRPlayerPawn::InitializeVR()
