@@ -226,22 +226,56 @@ VR player pawn with camera and motion controller support for Oculus Quest.
 
 ## Troubleshooting
 
+### Analyzing Logs on Quest
+
+The app writes a full UE log to device storage. This is the most useful source of crash and error information.
+
+**Pull and read the UE log:**
+```powershell
+$platformTools = "C:\Users\TheJudge\AppData\Local\Android\Sdk\platform-tools"
+$logPath = "/sdcard/Android/data/com.vrmovieplayer.app/files/UnrealGame/VRMoviePlayer/VRMoviePlayer/Saved/Logs/VRMoviePlayer.log"
+& "$platformTools\adb.exe" pull $logPath "$env:TEMP\VRMoviePlayer.log"
+Get-Content "$env:TEMP\VRMoviePlayer.log" | Select-Object -Last 100
+```
+
+**Capture live logcat while the app runs** (clear first, launch app, then dump):
+```powershell
+$platformTools = "C:\Users\TheJudge\AppData\Local\Android\Sdk\platform-tools"
+& "$platformTools\adb.exe" logcat -c
+# Launch the app on the headset, then wait ~20 seconds, then run:
+& "$platformTools\adb.exe" logcat -d -v brief "UE:V" "*:E" | Select-Object -Last 200
+```
+
+**Search for errors and fatal crashes in the UE log:**
+```powershell
+Get-Content "$env:TEMP\VRMoviePlayer.log" | Select-String -Pattern "Error|Fatal|Critical" | Select-Object -Last 50
+```
+
+**Check if the app process is running:**
+```powershell
+$platformTools = "C:\Users\TheJudge\AppData\Local\Android\Sdk\platform-tools"
+& "$platformTools\adb.exe" shell pidof com.vrmovieplayer.app
+```
+
 ### Video Not Playing
 - Verify the video file path is correct and accessible
 - Check that the video format is supported by Unreal's Media Framework
-- Look for errors in the Output Log
+- Look for errors in the UE log (see above)
 
 ### API Not Accessible
 - Ensure the Quest device and client are on the same network
 - Check firewall settings on both devices
 - Verify the API port is not blocked
-- Check the Output Log for server startup messages
+- Check the UE log for server startup messages
 
 ### VR Not Working
-- Ensure Oculus VR plugin is enabled
-- Check that the Quest device is properly connected
-- Verify VR is enabled in Project Settings
-- Test with Oculus Link or Air Link for desktop development
+- Ensure the app is listed under **App Library → Unknown Sources** (not as a flat 2D app)
+- Verify `com.oculus.intent.category.VR` is present in `ExtraActivitySettings` in `DefaultEngine.ini`
+- Check that `quest` is listed in the `com.oculus.supportedDevices` metadata value
+- Test desktop fallback by running in Unreal Editor (non-VR mode is supported)
+
+### No REST API access
+- Check access without WIFI: `adb reverse tcp:8080 tcp:8080`
 
 ## Future Enhancements
 
