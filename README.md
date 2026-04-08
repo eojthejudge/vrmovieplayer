@@ -97,6 +97,31 @@ In Visual Studio:
 
 ### Package for Oculus Quest
 
+#### One-time setup: replace the OpenXR loader (Quest 1 compatibility)
+
+UE 5.7 ships with OpenXR loader 1.1.46, which crashes on Quest 1's frozen 2022 runtime.
+You must replace it once with an older loader before packaging for Quest 1:
+
+```powershell
+# Download OpenXR loader 1.0.28.2 from Maven Central
+$aarUrl = "https://repo1.maven.org/maven2/org/khronos/openxr/openxr_loader_for_android/1.0.28.2/openxr_loader_for_android-1.0.28.2.aar"
+Invoke-WebRequest -Uri $aarUrl -OutFile "$env:TEMP\openxr_loader.aar" -UseBasicParsing
+Expand-Archive -Path "$env:TEMP\openxr_loader.aar" -DestinationPath "$env:TEMP\openxr_loader_extract"
+
+# Back up original and replace (adjust UE path if different)
+$ueLoader = "G:\EpicLauncher\UE_5.7\Engine\Binaries\ThirdParty\OpenXR\Android\arm64-v8a\libopenxr_loader.so"
+Copy-Item $ueLoader ($ueLoader + ".bak_1_1_46")
+Copy-Item "$env:TEMP\openxr_loader_extract\prefab\modules\openxr_loader\libs\android.arm64-v8a\libopenxr_loader.so" $ueLoader
+```
+
+> **Why:** Quest 1's VR runtime (`VrDriver.apk/libvrapiimpl.so`) was frozen at firmware v50
+> (2022). The Khronos loader 1.1.46 uses a loader–runtime negotiation protocol that Quest 1's
+> runtime aborts on. Loader 1.0.28.2 uses the older negotiation the Quest 1 runtime expects.
+> This replacement only affects Android builds; it does not affect Windows/editor builds.
+> Quest 2 and newer have up-to-date runtimes and work with either loader version.
+
+#### Packaging
+
 Once the editor opens successfully:
 
 1. In Unreal Editor: **File → Package Project → Android → Android (ASTC)**
