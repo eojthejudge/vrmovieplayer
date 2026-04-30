@@ -155,6 +155,18 @@ void AVRMoviePlayerGameMode::InitializeVRMoviePlayer()
 	// Auto-play video if configured
 	if (bAutoPlayOnStart && !DefaultVideoPath.IsEmpty())
 	{
+#if PLATFORM_ANDROID
+		// Clear Windows-style paths (e.g. F:\...) — they don't exist on Android
+		if (DefaultVideoPath.Len() >= 2 && DefaultVideoPath[1] == TEXT(':'))
+		{
+			UE_LOG(LogTemp, Warning, TEXT("DefaultVideoPath '%s' is a Windows path; clearing for Android. Use the file browser to select a video."), *DefaultVideoPath);
+			DefaultVideoPath = TEXT("");
+		}
+#endif
+	}
+
+	if (bAutoPlayOnStart && !DefaultVideoPath.IsEmpty())
+	{
 		UE_LOG(LogTemp, Log, TEXT("Auto-playing video: %s"), *DefaultVideoPath);
 		VideoPlayerController->PlayVideo(DefaultVideoPath);
 
