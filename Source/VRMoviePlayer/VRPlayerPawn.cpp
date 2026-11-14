@@ -63,6 +63,7 @@ AVRPlayerPawn::AVRPlayerPawn()
 
 	bVREnabled = true;
 	FileBrowser = nullptr;
+	VideoPlayerController = nullptr;
 }
 
 void AVRPlayerPawn::BeginPlay()
@@ -100,6 +101,10 @@ void AVRPlayerPawn::SetupPlayerInputComponent(UInputComponent* PlayerInputCompon
 	PlayerInputComponent->BindAction("ToggleFileBrowser", IE_Pressed, this, &AVRPlayerPawn::ToggleFileBrowser);
 	PlayerInputComponent->BindAction("TriggerPress", IE_Pressed, this, &AVRPlayerPawn::TriggerPressed);
 	PlayerInputComponent->BindAction("TriggerPress", IE_Released, this, &AVRPlayerPawn::TriggerReleased);
+	PlayerInputComponent->BindAction("RightTrigger", IE_Pressed, this, &AVRPlayerPawn::RightTriggerPressed);
+	PlayerInputComponent->BindAction("RightTrigger", IE_Released, this, &AVRPlayerPawn::TriggerReleased);
+	PlayerInputComponent->BindAction("TogglePlayback", IE_Pressed, this, &AVRPlayerPawn::TogglePlayback);
+	PlayerInputComponent->BindAction("SkipBackward", IE_Pressed, this, &AVRPlayerPawn::SkipBackward);
 }
 
 void AVRPlayerPawn::InitializeVR()
@@ -152,6 +157,55 @@ void AVRPlayerPawn::TriggerReleased()
 	if (WidgetInteraction)
 	{
 		WidgetInteraction->ReleasePointerKey(EKeys::LeftMouseButton);
+	}
+}
+
+void AVRPlayerPawn::RightTriggerPressed()
+{
+	if (FileBrowser && FileBrowser->IsBrowserVisible())
+	{
+		TriggerPressed();
+	}
+	else
+	{
+		SkipVideo(30.0f);
+	}
+}
+
+void AVRPlayerPawn::TogglePlayback()
+{
+	if (VideoPlayerController && VideoPlayerController->MediaPlayer)
+	{
+		if (VideoPlayerController->MediaPlayer->IsPlaying())
+		{
+			VideoPlayerController->PauseVideo();
+		}
+		else if (VideoPlayerController->MediaPlayer->IsPaused())
+		{
+			VideoPlayerController->ResumeVideo();
+		}
+	}
+}
+
+void AVRPlayerPawn::SkipBackward()
+{
+	SkipVideo(-30.0f);
+}
+
+void AVRPlayerPawn::SkipVideo(float OffsetSeconds)
+{
+	if (VideoPlayerController && VideoPlayerController->MediaPlayer && VideoPlayerController->MediaPlayer->IsReady())
+	{
+		const float Duration = VideoPlayerController->GetTotalDuration();
+		if (Duration > 0.0f)
+		{
+			const float Target = FMath::Clamp(VideoPlayerController->GetCurrentTimestamp() + OffsetSeconds, 0.0f, Duration);
+			VideoPlayerController->SeekToTime(Target);
+		}
+		else
+		{
+			UE_LOG(LogTemp, Warning, TEXT("Cannot skip video: duration is unavailable"));
+		}
 	}
 }
 

@@ -163,6 +163,13 @@ You can configure the following settings in the Game Mode:
 3. Launch the application
 4. Use the REST API to control playback from a remote device on the same network
 
+### Controller Controls
+
+- **A**: Pause or resume playback.
+- **Right trigger**: Skip forward 30 seconds; select a file when the browser is open.
+- **Left trigger**: Skip backward 30 seconds.
+- **Y**: Open or close the file browser.
+
 ### Example API Usage
 
 ```bash

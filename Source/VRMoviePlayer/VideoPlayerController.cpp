@@ -159,8 +159,14 @@ void AVideoPlayerController::SeekToTime(float TimeInSeconds)
 	if (MediaPlayer && MediaPlayer->IsReady())
 	{
 		FTimespan Time = FTimespan::FromSeconds(TimeInSeconds);
-		MediaPlayer->Seek(Time);
-		UE_LOG(LogTemp, Log, TEXT("Seeking to time: %f seconds"), TimeInSeconds);
+		if (MediaPlayer->Seek(Time))
+		{
+			UE_LOG(LogTemp, Log, TEXT("Seeking to time: %f seconds"), TimeInSeconds);
+		}
+		else
+		{
+			UE_LOG(LogTemp, Warning, TEXT("Failed to seek to time: %f seconds"), TimeInSeconds);
+		}
 	}
 }
 
