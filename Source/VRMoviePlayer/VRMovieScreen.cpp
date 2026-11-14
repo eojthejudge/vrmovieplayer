@@ -127,13 +127,10 @@ void AVRMovieScreen::UpdateScreenAspectRatio()
 
 void AVRMovieScreen::SetScreenPosition(const FVector& PlayerLocation, const FRotator& PlayerRotation)
 {
-	// Calculate position in front of player
-	FVector ForwardVector = PlayerRotation.Vector();
-	FVector ScreenLocation = PlayerLocation + (ForwardVector * DistanceFromPlayer);
-
-	// Set screen to face the player
-	FRotator ScreenRotation = (PlayerLocation - ScreenLocation).Rotation();
-	ScreenRotation.Pitch = 0.0f; // Keep screen level
+	const FRotator ViewRotation(PlayerRotation.Pitch, PlayerRotation.Yaw, 0.0f);
+	const FVector ScreenLocation = PlayerLocation + ViewRotation.Vector() * DistanceFromPlayer;
+	// The plane's root rotation already includes the mesh's upright orientation.
+	const FQuat ScreenRotation = ViewRotation.Quaternion() * FRotator(0.0f, 90.0f, 90.0f).Quaternion();
 
 	SetActorLocation(ScreenLocation);
 	SetActorRotation(ScreenRotation);

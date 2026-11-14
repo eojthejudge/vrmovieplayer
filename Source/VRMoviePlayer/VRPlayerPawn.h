@@ -12,6 +12,8 @@
 #include "VideoFileBrowser.h"
 #include "VRPlayerPawn.generated.h"
 
+class AVRMovieScreen;
+
 UCLASS()
 class VRMOVIEPLAYER_API AVRPlayerPawn : public APawn
 {
@@ -24,6 +26,7 @@ public:
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
+	virtual void EndPlay(const EEndPlayReason::Type EndPlayReason) override;
 
 public:
 	// Called every frame
@@ -66,8 +69,14 @@ public:
 	UPROPERTY(BlueprintReadWrite, Category = "Video")
 	AVideoPlayerController* VideoPlayerController;
 
+	UPROPERTY(BlueprintReadWrite, Category = "Video")
+	AVRMovieScreen* MovieScreen;
+
 private:
 	void InitializeVR();
+	void HandleHeadsetRecenter();
+	void HandleControllerRecenter();
+	int32 RecenterFramesRemaining = 0;
 
 	// Input handlers
 	void ToggleFileBrowser();
