@@ -150,7 +150,7 @@ void AVRMovieScreen::CreateScreenMaterial()
 	}
 
 	// Try to load a custom video screen material first
-	UMaterial* BaseMaterial = Cast<UMaterial>(StaticLoadObject(UMaterial::StaticClass(), nullptr, TEXT("/Game/Materials/M_VideoScreen")));
+	UMaterial* BaseMaterial = Cast<UMaterial>(StaticLoadObject(UMaterial::StaticClass(), nullptr, TEXT("/Game/Quest1/M_QuestVideoScreen")));
 	
 	// Fallback to engine material if custom doesn't exist
 	if (!BaseMaterial)

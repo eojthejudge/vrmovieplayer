@@ -52,6 +52,9 @@ public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "VR")
 	UWidgetInteractionComponent* WidgetInteraction;
 
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "VR")
+	UStaticMeshComponent* ControllerPointer;
+
 	// Enable or disable VR mode
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "VR")
 	bool bVREnabled;

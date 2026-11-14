@@ -1,6 +1,6 @@
 # VR Movie Player
 
-A VR movie player application for Oculus Quest built with Unreal Engine 5. This application allows you to watch videos on a virtual screen in VR and control playback through a REST API.
+A VR movie player application for Oculus Quest 1 built with Unreal Engine 4.27.2. This application allows you to watch videos on a virtual screen in VR and query playback through a REST API.
 
 ## Features
 
@@ -39,95 +39,38 @@ See [requirements.md](requirements.md) for detailed functional and non-functiona
 
 ## Prerequisites
 
-- Unreal Engine 5.0 or later
+- Unreal Engine 4.27.2 with Android support
 - Oculus Quest device
 - Android development tools (for Quest deployment)
 - Visual Studio 2019/2022 (Windows) or Xcode (Mac)
 
 ## Building the Project
 
-### Prerequisites
-- Unreal Engine 5.7
-- Visual Studio 2022 with C++ build tools
-- Project file paths configured for your installation
-
-### Quick Start (Recommended)
-
-The easiest way to build is to open the project file directly, which auto-generates and builds:
+Build the editor target (adjust paths for your installation):
 
 ```powershell
-# Adjust paths to match your UE and Visual Studio installation
-& "G:\EpicLauncher\UE_5.7\Engine\Binaries\Win64\UnrealEditor.exe" "F:\devel\git\vrmovieplayer\VRMoviePlayer.uproject"
+& "I:\EpicLauncher\UE_4.27\Engine\Build\BatchFiles\Build.bat" VRMoviePlayerEditor Win64 Development -Project="F:\devel\git\vrmovieplayer\VRMoviePlayer.uproject" -WaitMutex -NoHotReloadFromIDE
+.\Launch-UE427.ps1
 ```
 
-### Full Build Process (for troubleshooting)
-
-If you encounter build errors, follow these steps:
-
-```powershell
-# 1. Close any running Unreal processes
-Get-Process | Where-Object {$_.Name -like "*Unreal*" -or $_.Name -like "*msbuild*"} | Stop-Process -Force -ErrorAction SilentlyContinue
-
-# 2. Navigate to project directory
-cd F:\devel\git\vrmovieplayer
-
-# 3. Clean build artifacts
-Remove-Item -Path "Binaries", "Intermediate", "Saved" -Recurse -Force -ErrorAction SilentlyContinue
-
-# 4. Regenerate Visual Studio project files
-& "G:\EpicLauncher\UE_5.7\Engine\Binaries\Win64\UnrealVersionSelector.exe" /projectfiles "F:\devel\git\vrmovieplayer\VRMoviePlayer.uproject"
-
-Start-Sleep -Seconds 3
-
-# 5. Open Visual Studio
-$vs = "G:\Program Files\Microsoft Visual Studio\2022\Community\Common7\IDE\devenv.exe"
-& $vs "VRMoviePlayer.sln"
-```
-
-In Visual Studio:
-- Select **Development Editor** configuration (top toolbar dropdown)
-- Build: `Ctrl+Shift+B` or **Build → Build Solution**
-- Wait for "Build succeeded" message
-- Close Visual Studio
-
-```powershell
-# 6. Open the project in Unreal Editor
-& "G:\EpicLauncher\UE_5.7\Engine\Binaries\Win64\UnrealEditor.exe" "F:\devel\git\vrmovieplayer\VRMoviePlayer.uproject"
-```
+The launcher uses a separate Android debug keystore location for Java 8. Its parameters
+can be changed for other installations. UE 4.27's Android SDK settings are shared with
+other Unreal versions; switch them back before building with UE 5.
 
 ### Package for Oculus Quest
 
-#### One-time setup: replace the OpenXR loader (Quest 1 compatibility)
-
-UE 5.7 ships with OpenXR loader 1.1.46, which crashes on Quest 1's frozen 2022 runtime.
-You must replace it once with an older loader before packaging for Quest 1:
-
-```powershell
-# Download OpenXR loader 1.0.28.2 from Maven Central
-$aarUrl = "https://repo1.maven.org/maven2/org/khronos/openxr/openxr_loader_for_android/1.0.28.2/openxr_loader_for_android-1.0.28.2.aar"
-Invoke-WebRequest -Uri $aarUrl -OutFile "$env:TEMP\openxr_loader.aar" -UseBasicParsing
-Expand-Archive -Path "$env:TEMP\openxr_loader.aar" -DestinationPath "$env:TEMP\openxr_loader_extract"
-
-# Back up original and replace (adjust UE path if different)
-$ueLoader = "G:\EpicLauncher\UE_5.7\Engine\Binaries\ThirdParty\OpenXR\Android\arm64-v8a\libopenxr_loader.so"
-Copy-Item $ueLoader ($ueLoader + ".bak_1_1_46")
-Copy-Item "$env:TEMP\openxr_loader_extract\prefab\modules\openxr_loader\libs\android.arm64-v8a\libopenxr_loader.so" $ueLoader
-```
-
-> **Why:** Quest 1's VR runtime (`VrDriver.apk/libvrapiimpl.so`) was frozen at firmware v50
-> (2022). The Khronos loader 1.1.46 uses a loader–runtime negotiation protocol that Quest 1's
-> runtime aborts on. Loader 1.0.28.2 uses the older negotiation the Quest 1 runtime expects.
-> This replacement only affects Android builds; it does not affect Windows/editor builds.
-> Quest 2 and newer have up-to-date runtimes and work with either loader version.
-
-#### Packaging
-
-Once the editor opens successfully:
+Use UE 4.27's bundled Oculus VR plugin, not the UE 5 OpenXR loader replacement.
+Configure the Android SDK, NDK and JDK for UE 4.27 following
+[Epic's Android setup guide](https://dev.epicgames.com/documentation/en-us/unreal-engine/setting-up-android-sdk-and-ndk-for-unreal?application_version=4.27).
+The engine's `SetupAndroid.bat` requests NDK 21.4.7075529; newer NDKs used by UE 5 are not supported.
 
 1. In Unreal Editor: **File → Package Project → Android → Android (ASTC)**
 2. Choose output folder
 3. Wait for packaging to complete
 4. Install on Quest: `adb install -r output.apk`
+
+Quest 1 is no longer supported for new Meta Store updates; use a development-enabled headset and sideload the APK.
+The UE 5 assets were replaced by a minimal UE 4.27 level and video material; the original assets remain on the original Git branch.
 
 ## REST API Endpoints
 

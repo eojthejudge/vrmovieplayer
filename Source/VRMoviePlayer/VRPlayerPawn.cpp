@@ -3,6 +3,10 @@
 #include "VRPlayerPawn.h"
 #include "Camera/CameraComponent.h"
 #include "Components/SceneComponent.h"
+#include "Components/StaticMeshComponent.h"
+#include "UObject/ConstructorHelpers.h"
+#include "Engine/StaticMesh.h"
+#include "Materials/MaterialInterface.h"
 #include "IXRTrackingSystem.h"
 #include "IXRCamera.h"
 #include "MotionControllerComponent.h"
@@ -39,6 +43,24 @@ AVRPlayerPawn::AVRPlayerPawn()
 	WidgetInteraction->InteractionDistance = 500.0f;
 	WidgetInteraction->InteractionSource = EWidgetInteractionSource::World;
 
+	ControllerPointer = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("ControllerPointer"));
+	ControllerPointer->SetupAttachment(WidgetInteraction);
+	ControllerPointer->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+	ControllerPointer->SetCastShadow(false);
+	ControllerPointer->SetVisibility(false);
+	ControllerPointer->SetRelativeRotation(FRotator(90.0f, 0.0f, 0.0f));
+
+	static ConstructorHelpers::FObjectFinder<UStaticMesh> PointerMesh(TEXT("/Engine/BasicShapes/Cylinder"));
+	if (PointerMesh.Succeeded())
+	{
+		ControllerPointer->SetStaticMesh(PointerMesh.Object);
+	}
+	static ConstructorHelpers::FObjectFinder<UMaterialInterface> PointerMaterial(TEXT("/Game/Quest1/M_ControllerPointer"));
+	if (PointerMaterial.Succeeded())
+	{
+		ControllerPointer->SetMaterial(0, PointerMaterial.Object);
+	}
+
 	bVREnabled = true;
 	FileBrowser = nullptr;
 }
@@ -59,6 +81,16 @@ void AVRPlayerPawn::BeginPlay()
 void AVRPlayerPawn::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
+
+	const bool bShowPointer = bVREnabled && FileBrowser && FileBrowser->IsBrowserVisible() && RightController->IsTracked();
+	ControllerPointer->SetVisibility(bShowPointer);
+	if (bShowPointer)
+	{
+		const FHitResult& Hit = WidgetInteraction->GetLastHitResult();
+		const float Length = Hit.bBlockingHit ? Hit.Distance : WidgetInteraction->InteractionDistance;
+		ControllerPointer->SetRelativeLocation(FVector(Length * 0.5f, 0.0f, 0.0f));
+		ControllerPointer->SetRelativeScale3D(FVector(0.005f, 0.005f, Length / 100.0f));
+	}
 }
 
 void AVRPlayerPawn::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)

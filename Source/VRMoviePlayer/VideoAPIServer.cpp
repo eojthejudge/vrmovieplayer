@@ -61,25 +61,37 @@ bool AVideoAPIServer::StartServer()
 	FilenameRouteHandle = HttpRouter->BindRoute(
 		FHttpPath(TEXT("/api/filename")),
 		EHttpServerRequestVerbs::VERB_GET,
-		FHttpRequestHandler::CreateUObject(this, &AVideoAPIServer::HandleGetFilename)
+		[this](const FHttpServerRequest& Request, const FHttpResultCallback& OnComplete)
+		{
+			return HandleGetFilename(Request, OnComplete);
+		}
 	);
 
 	StateRouteHandle = HttpRouter->BindRoute(
 		FHttpPath(TEXT("/api/state")),
 		EHttpServerRequestVerbs::VERB_GET,
-		FHttpRequestHandler::CreateUObject(this, &AVideoAPIServer::HandleGetState)
+		[this](const FHttpServerRequest& Request, const FHttpResultCallback& OnComplete)
+		{
+			return HandleGetState(Request, OnComplete);
+		}
 	);
 
 	TimestampRouteHandle = HttpRouter->BindRoute(
 		FHttpPath(TEXT("/api/timestamp")),
 		EHttpServerRequestVerbs::VERB_GET,
-		FHttpRequestHandler::CreateUObject(this, &AVideoAPIServer::HandleGetTimestamp)
+		[this](const FHttpServerRequest& Request, const FHttpResultCallback& OnComplete)
+		{
+			return HandleGetTimestamp(Request, OnComplete);
+		}
 	);
 
 	DurationRouteHandle = HttpRouter->BindRoute(
 		FHttpPath(TEXT("/api/duration")),
 		EHttpServerRequestVerbs::VERB_GET,
-		FHttpRequestHandler::CreateUObject(this, &AVideoAPIServer::HandleGetDuration)
+		[this](const FHttpServerRequest& Request, const FHttpResultCallback& OnComplete)
+		{
+			return HandleGetDuration(Request, OnComplete);
+		}
 	);
 
 	// Start listening
