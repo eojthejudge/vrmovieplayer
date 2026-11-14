@@ -8,8 +8,7 @@ public class VRMoviePlayerTarget : TargetRules
 	public VRMoviePlayerTarget(TargetInfo Target) : base(Target)
 	{
 		Type = TargetType.Game;
-		DefaultBuildSettings = BuildSettingsVersion.V6;
-		IncludeOrderVersion = EngineIncludeOrderVersion.Unreal5_7;
+		DefaultBuildSettings = BuildSettingsVersion.V2;
 		ExtraModuleNames.Add("VRMoviePlayer");
 	}
 }

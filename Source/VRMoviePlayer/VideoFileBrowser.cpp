@@ -158,7 +158,7 @@ void AVideoFileBrowser::BuildWidget()
 {
 	TSharedRef<SScrollBox> ScrollBox = SNew(SScrollBox);
 
-	if (VideoFiles.IsEmpty())
+	if (VideoFiles.Num() == 0)
 	{
 		ScrollBox->AddSlot()
 		.Padding(8.0f)
