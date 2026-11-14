@@ -63,6 +63,9 @@ public:
 	UPROPERTY(BlueprintReadWrite, Category = "VR")
 	AVideoFileBrowser* FileBrowser;
 
+	UPROPERTY(BlueprintReadWrite, Category = "Video")
+	AVideoPlayerController* VideoPlayerController;
+
 private:
 	void InitializeVR();
 
@@ -70,4 +73,8 @@ private:
 	void ToggleFileBrowser();
 	void TriggerPressed();
 	void TriggerReleased();
+	void RightTriggerPressed();
+	void TogglePlayback();
+	void SkipBackward();
+	void SkipVideo(float OffsetSeconds);
 };

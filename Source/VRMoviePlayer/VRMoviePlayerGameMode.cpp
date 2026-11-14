@@ -140,7 +140,7 @@ void AVRMoviePlayerGameMode::InitializeVRMoviePlayer()
 
 	UE_LOG(LogTemp, Log, TEXT("Video File Browser spawned (hidden until Y button / F key)"));
 
-	// Give the file browser reference to the pawn so it can toggle it
+	// Give the pawn access to the browser and playback controls
 	APlayerController* PC = World->GetFirstPlayerController();
 	if (PC)
 	{
@@ -148,7 +148,8 @@ void AVRMoviePlayerGameMode::InitializeVRMoviePlayer()
 		if (VRPawn)
 		{
 			VRPawn->FileBrowser = FileBrowser;
-			UE_LOG(LogTemp, Log, TEXT("FileBrowser wired to VRPlayerPawn"));
+			VRPawn->VideoPlayerController = VideoPlayerController;
+			UE_LOG(LogTemp, Log, TEXT("FileBrowser and VideoPlayerController wired to VRPlayerPawn"));
 		}
 	}
 
