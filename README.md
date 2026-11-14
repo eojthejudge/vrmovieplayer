@@ -64,10 +64,31 @@ Configure the Android SDK, NDK and JDK for UE 4.27 following
 [Epic's Android setup guide](https://dev.epicgames.com/documentation/en-us/unreal-engine/setting-up-android-sdk-and-ndk-for-unreal?application_version=4.27).
 The engine's `SetupAndroid.bat` requests NDK 21.4.7075529; newer NDKs used by UE 5 are not supported.
 
-1. In Unreal Editor: **File → Package Project → Android → Android (ASTC)**
-2. Choose output folder
-3. Wait for packaging to complete
-4. Install on Quest: `adb install -r output.apk`
+From PowerShell in the project root, adjust these paths for your installation and run:
+
+```powershell
+$engine = "I:\EpicLauncher\UE_4.27"
+$env:ANDROID_HOME = "$env:LOCALAPPDATA\Android\Sdk-UE427"
+$env:NDKROOT = "$env:LOCALAPPDATA\Android\Sdk\ndk\21.4.7075529"
+$env:JAVA_HOME = "I:\Program Files\Android\Android Studio1\jre"
+$env:ANDROID_SDK_HOME = "$env:LOCALAPPDATA\Android\UE427User"
+$env:PATH = "$engine\Engine\Binaries\DotNET;$env:PATH"
+New-Item -ItemType Directory -Force -Path $env:ANDROID_SDK_HOME | Out-Null
+
+$project = (Resolve-Path ".\VRMoviePlayer.uproject").Path
+& "$engine\Engine\Build\BatchFiles\RunUAT.bat" BuildCookRun "-project=$project" `
+    -noP4 -platform=Android -cookflavor=ASTC -clientconfig=Development `
+    -build -cook -stage -pak -package -unattended -utf8output
+if ($LASTEXITCODE -ne 0) { throw "Android packaging failed; do not install the old APK." }
+
+# Connect the Quest with USB debugging enabled and authorize the computer.
+& "$env:ANDROID_HOME\platform-tools\adb.exe" devices
+& "$env:ANDROID_HOME\platform-tools\adb.exe" install -r ".\Binaries\Android\VRMoviePlayer-arm64.apk"
+if ($LASTEXITCODE -ne 0) { throw "APK installation failed." }
+```
+
+`install -r` replaces the app while preserving its data. Alternatively, package in
+Unreal Editor via **File → Package Project → Android → Android (ASTC)**.
 
 Quest 1 is no longer supported for new Meta Store updates; use a development-enabled headset and sideload the APK.
 The UE 5 assets were replaced by a minimal UE 4.27 level and video material; the original assets remain on the original Git branch.
@@ -243,7 +264,9 @@ $platformTools = "C:\Users\TheJudge\AppData\Local\Android\Sdk\platform-tools"
 - Test desktop fallback by running in Unreal Editor (non-VR mode is supported)
 
 ### No REST API access
-- Check access without WIFI: `adb reverse tcp:8080 tcp:8080`
+- Test the Quest's local listener over USB with `adb forward tcp:18080 tcp:8080`,
+  then run `curl.exe http://127.0.0.1:18080/api/state` on the computer. Remove the
+  rule afterwards with `adb forward --remove tcp:18080`.
 
 ## Future Enhancements
 
