@@ -169,6 +169,7 @@ You can configure the following settings in the Game Mode:
 - **Right trigger**: Skip forward 30 seconds; select a file when the browser is open.
 - **Left trigger**: Skip backward 30 seconds.
 - **Y**: Open or close the file browser.
+- **Hold the Quest system button**: Recenter the movie screen in the direction you are looking, including up or down.
 
 ### Example API Usage
 

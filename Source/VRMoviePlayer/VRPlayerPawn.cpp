@@ -1,6 +1,7 @@
 // Copyright Epic Games, Inc. All Rights Reserved.
 
 #include "VRPlayerPawn.h"
+#include "VRMovieScreen.h"
 #include "Camera/CameraComponent.h"
 #include "Components/SceneComponent.h"
 #include "Components/StaticMeshComponent.h"
@@ -14,6 +15,7 @@
 #include "Components/WidgetInteractionComponent.h"
 #include "Kismet/GameplayStatics.h"
 #include "Engine/Engine.h"
+#include "Misc/CoreDelegates.h"
 
 AVRPlayerPawn::AVRPlayerPawn()
 {
@@ -71,6 +73,8 @@ void AVRPlayerPawn::BeginPlay()
 	Super::BeginPlay();
 
 	InitializeVR();
+	FCoreDelegates::VRHeadsetRecenter.AddUObject(this, &AVRPlayerPawn::HandleHeadsetRecenter);
+	FCoreDelegates::VRControllerRecentered.AddUObject(this, &AVRPlayerPawn::HandleControllerRecenter);
 
 	// If VR didn't initialise (desktop/editor), switch interaction to mouse source
 	if (!bVREnabled)
@@ -79,9 +83,28 @@ void AVRPlayerPawn::BeginPlay()
 	}
 }
 
+void AVRPlayerPawn::EndPlay(const EEndPlayReason::Type EndPlayReason)
+{
+	FCoreDelegates::VRHeadsetRecenter.RemoveAll(this);
+	FCoreDelegates::VRControllerRecentered.RemoveAll(this);
+	Super::EndPlay(EndPlayReason);
+}
+
 void AVRPlayerPawn::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
+
+	if (RecenterFramesRemaining > 0 && --RecenterFramesRemaining == 0)
+	{
+		if (IsValid(MovieScreen) && Camera)
+		{
+			MovieScreen->SetScreenPosition(Camera->GetComponentLocation(), Camera->GetComponentRotation());
+		}
+		else
+		{
+			UE_LOG(LogTemp, Warning, TEXT("Cannot recenter movie screen: screen or camera is unavailable"));
+		}
+	}
 
 	const bool bShowPointer = bVREnabled && FileBrowser && FileBrowser->IsBrowserVisible() && RightController->IsTracked();
 	ControllerPointer->SetVisibility(bShowPointer);
@@ -130,6 +153,26 @@ void AVRPlayerPawn::InitializeVR()
 		UE_LOG(LogTemp, Warning, TEXT("VR Mode enabled but no XR system detected. Running in non-VR mode."));
 		bVREnabled = false;
 	}
+}
+
+void AVRPlayerPawn::HandleHeadsetRecenter()
+{
+	if (GEngine && GEngine->XRSystem.IsValid())
+	{
+		// Binding the recenter delegate replaces the Oculus plugin's default reset.
+		GEngine->XRSystem->ResetOrientationAndPosition(0.0f);
+		HandleControllerRecenter();
+	}
+	else
+	{
+		UE_LOG(LogTemp, Warning, TEXT("Cannot recenter movie screen: XR system is unavailable"));
+	}
+}
+
+void AVRPlayerPawn::HandleControllerRecenter()
+{
+	// Wait for the camera to update with the new tracking origin.
+	RecenterFramesRemaining = 2;
 }
 
 void AVRPlayerPawn::ToggleFileBrowser()

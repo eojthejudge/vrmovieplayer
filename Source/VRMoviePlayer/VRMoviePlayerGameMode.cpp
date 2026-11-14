@@ -149,6 +149,7 @@ void AVRMoviePlayerGameMode::InitializeVRMoviePlayer()
 		{
 			VRPawn->FileBrowser = FileBrowser;
 			VRPawn->VideoPlayerController = VideoPlayerController;
+			VRPawn->MovieScreen = MovieScreen;
 			UE_LOG(LogTemp, Log, TEXT("FileBrowser and VideoPlayerController wired to VRPlayerPawn"));
 		}
 	}
